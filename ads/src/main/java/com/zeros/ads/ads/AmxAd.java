@@ -1,9 +1,18 @@
 package com.zeros.ads.ads;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.adjust.sdk.Adjust;
 import com.adjust.sdk.AdjustAttribution;
@@ -18,12 +27,26 @@ import com.adjust.sdk.OnEventTrackingFailedListener;
 import com.adjust.sdk.OnEventTrackingSucceededListener;
 import com.adjust.sdk.OnSessionTrackingFailedListener;
 import com.adjust.sdk.OnSessionTrackingSucceededListener;
+import com.applovin.mediation.ads.MaxRewardedAd;
+import com.facebook.FacebookSdk;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
+import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.zeros.ads.admob.Admob;
 import com.zeros.ads.admob.AppOpenManager;
+import com.zeros.ads.ads.wrapper.ApInterstitialAd;
+import com.zeros.ads.ads.wrapper.ApNativeAd;
+import com.zeros.ads.ads.wrapper.ApRewardAd;
 import com.zeros.ads.config.AmxAdConfig;
 import com.zeros.ads.event.AmxAdjust;
+import com.zeros.ads.funtion.AdCallback;
 import com.zeros.ads.util.AppUtil;
-import com.facebook.FacebookSdk;
+import com.zeros.ads.util.SharePreferenceUtils;
 
 public class AmxAd {
     public static final String TAG_ADJUST = "AmxAdjust";
@@ -38,6 +61,10 @@ public class AmxAd {
             INSTANCE = new AmxAd();
         }
         return INSTANCE;
+    }
+
+    public AmxAdConfig getAdConfig() {
+        return adConfig;
     }
 
     public void setCountClickToShowAds(int countClickToShowAds) {
@@ -161,7 +188,260 @@ public class AmxAd {
         }
     }
 
-    public AmxAdConfig getAdConfig() {
-        return adConfig;
+    public void loadBanner(Activity mActivity, String id) {
+        Admob.getInstance().loadBanner(mActivity, id);
     }
+
+    public void loadBanner(Activity mActivity, String id, AdCallback adCallback) {
+        Admob.getInstance().loadBanner(mActivity, id, adCallback);
+    }
+
+    public void loadCollapsibleBanner(Activity activity, String id, String gravity, AdCallback adCallback) {
+        Admob.getInstance().loadCollapsibleBanner(activity, id, gravity, adCallback);
+    }
+
+    public void loadCollapsibleBannerFragment(Activity activity, String id, View rootView, String gravity, AdCallback adCallback) {
+        Admob.getInstance().loadCollapsibleBannerFragment(activity, id, rootView, gravity, adCallback);
+    }
+
+    public void loadCollapsibleBannerSizeMedium(Activity activity, String id, String gravity, AdSize sizeBanner, AdCallback adCallback) {
+        Admob.getInstance().loadCollapsibleBannerSizeMedium(activity, id, gravity, sizeBanner, adCallback);
+    }
+
+    public void loadBannerFragment(Activity mActivity, String id, View rootView) {
+        Admob.getInstance().loadBannerFragment(mActivity, id, rootView);
+    }
+
+    public void loadBannerFragment(Activity mActivity, String id, View rootView, AdCallback adCallback) {
+        Admob.getInstance().loadBannerFragment(mActivity, id, rootView, adCallback);
+    }
+
+    public void loadInlineBanner(Activity mActivity, String idBanner, String inlineStyle) {
+        Admob.getInstance().loadInlineBanner(mActivity, idBanner, inlineStyle);
+    }
+
+    public void loadInlineBanner(Activity mActivity, String idBanner, String inlineStyle, AdCallback adCallback) {
+        Admob.getInstance().loadInlineBanner(mActivity, idBanner, inlineStyle, adCallback);
+    }
+
+    public void loadBannerInlineFragment(Activity mActivity, String idBanner, View rootView, String inlineStyle) {
+        Admob.getInstance().loadInlineBannerFragment(mActivity, idBanner, rootView, inlineStyle);
+    }
+
+    public void loadBannerInlineFragment(Activity mActivity, String idBanner, View rootView, String inlineStyle, AdCallback adCallback) {
+        Admob.getInstance().loadInlineBannerFragment(mActivity, idBanner, rootView, inlineStyle, adCallback);
+    }
+
+    public void loadSplashInterstitialAds(Context context, String id, long timeOut, long timeDelay, AdCallback adListener) {
+        Admob.getInstance().loadSplashInterstitialAds(context, id, timeOut, timeDelay, true, adListener);
+    }
+
+    public void onCheckShowSplashWhenFail(AppCompatActivity activity, AdCallback callback, int timeDelay) {
+        Admob.getInstance().onCheckShowSplashWhenFail(activity, callback, timeDelay);
+    }
+
+    public InterstitialAd getInterstitialAds(Context context, String id, AdCallback adListener) {
+        ApInterstitialAd apInterstitialAd = new ApInterstitialAd();
+        Admob.getInstance().getInterstitialAds(context, id, new AdCallback() {
+            @Override
+            public void onInterstitialLoad(@Nullable InterstitialAd interstitialAd) {
+                super.onInterstitialLoad(interstitialAd);
+                Log.d(TAG, "Admob onInterstitialLoad");
+                apInterstitialAd.setInterstitialAd(interstitialAd);
+                adListener.onInterstitialLoad(apInterstitialAd.getInterstitialAd());
+            }
+
+            @Override
+            public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                super.onAdFailedToLoad(i);
+                adListener.onAdFailedToLoad(i);
+            }
+
+            @Override
+            public void onAdFailedToShow(@Nullable AdError adError) {
+                super.onAdFailedToShow(adError);
+                adListener.onAdFailedToShow(adError);
+            }
+
+        });
+        return apInterstitialAd.getInterstitialAd();
+    }
+
+    public void forceShowInterstitial(@NonNull Context context, ApInterstitialAd mInterstitialAd,
+                                      @NonNull final AdCallback callback, boolean shouldReloadAds) {
+        if (System.currentTimeMillis() - SharePreferenceUtils.getLastImpressionInterstitialTime(context)
+                < AmxAd.getInstance().adConfig.getIntervalInterstitialAd() * 1000L
+        ) {
+            callback.onNextAction();
+            return;
+        }
+        if (mInterstitialAd == null || mInterstitialAd.isNotReady()) {
+            callback.onNextAction();
+            return;
+        }
+        AdCallback adCallback = new AdCallback() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                callback.onAdClosed();
+                if (shouldReloadAds) {
+                    Admob.getInstance().getInterstitialAds(context, mInterstitialAd.getInterstitialAd().getAdUnitId(), new AdCallback() {
+                        @Override
+                        public void onInterstitialLoad(@Nullable InterstitialAd interstitialAd) {
+                            super.onInterstitialLoad(interstitialAd);
+                            mInterstitialAd.setInterstitialAd(interstitialAd);
+                            callback.onInterstitialLoad(mInterstitialAd.getInterstitialAd());
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                            super.onAdFailedToLoad(i);
+                            mInterstitialAd.setInterstitialAd(null);
+                            callback.onAdFailedToLoad(i);
+                        }
+
+                        @Override
+                        public void onAdFailedToShow(@Nullable AdError adError) {
+                            super.onAdFailedToShow(adError);
+                            callback.onAdFailedToShow(adError);
+                        }
+
+                    });
+                } else {
+                    mInterstitialAd.setInterstitialAd(null);
+                }
+            }
+
+            @Override
+            public void onNextAction() {
+                super.onNextAction();
+                callback.onNextAction();
+            }
+
+            @Override
+            public void onAdFailedToShow(@Nullable AdError adError) {
+                super.onAdFailedToShow(adError);
+                callback.onAdFailedToShow(adError);
+                if (shouldReloadAds) {
+                    Admob.getInstance().getInterstitialAds(context, mInterstitialAd.getInterstitialAd().getAdUnitId(), new AdCallback() {
+                        @Override
+                        public void onInterstitialLoad(@Nullable InterstitialAd interstitialAd) {
+                            super.onInterstitialLoad(interstitialAd);
+                            mInterstitialAd.setInterstitialAd(interstitialAd);
+                            callback.onInterstitialLoad(mInterstitialAd.getInterstitialAd());
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                            super.onAdFailedToLoad(i);
+                            callback.onAdFailedToLoad(i);
+                        }
+
+                        @Override
+                        public void onAdFailedToShow(@Nullable AdError adError) {
+                            super.onAdFailedToShow(adError);
+                            callback.onAdFailedToShow(adError);
+                        }
+
+                    });
+                } else {
+                    mInterstitialAd.setInterstitialAd(null);
+                }
+            }
+
+            @Override
+            public void onAdClicked() {
+                super.onAdClicked();
+                callback.onAdClicked();
+            }
+
+            @Override
+            public void onInterstitialShow() {
+                super.onInterstitialShow();
+                callback.onInterstitialShow();
+            }
+        };
+        Admob.getInstance().forceShowInterstitial(context, mInterstitialAd.getInterstitialAd(), adCallback);
+    }
+
+    public void loadNativeAdResultCallback(final Activity activity, String id,
+                                           int layoutCustomNative, AdCallback callback) {
+        Admob.getInstance().loadNativeAd(((Context) activity), id, new AdCallback() {
+            @Override
+            public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                super.onUnifiedNativeAdLoaded(unifiedNativeAd);
+                callback.onNativeAdLoaded(new ApNativeAd(layoutCustomNative, unifiedNativeAd));
+            }
+
+            @Override
+            public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                super.onAdFailedToLoad(i);
+                callback.onAdFailedToLoad(i);
+            }
+
+            @Override
+            public void onAdFailedToShow(@Nullable AdError adError) {
+                super.onAdFailedToShow(adError);
+                callback.onAdFailedToShow(adError);
+            }
+
+            @Override
+            public void onAdClicked() {
+                super.onAdClicked();
+                callback.onAdClicked();
+            }
+        });
+    }
+
+    public void loadNativeAd(final Activity activity, String id,
+                             int layoutCustomNative, FrameLayout adPlaceHolder, ShimmerFrameLayout
+                                     containerShimmerLoading, AdCallback callback) {
+        Admob.getInstance().loadNativeAd(((Context) activity), id, new AdCallback() {
+            @Override
+            public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                super.onUnifiedNativeAdLoaded(unifiedNativeAd);
+                callback.onNativeAdLoaded(new ApNativeAd(layoutCustomNative, unifiedNativeAd));
+                populateNativeAdView(activity, new ApNativeAd(layoutCustomNative, unifiedNativeAd), adPlaceHolder, containerShimmerLoading);
+            }
+
+            @Override
+            public void onAdImpression() {
+                super.onAdImpression();
+                callback.onAdImpression();
+            }
+
+            @Override
+            public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                super.onAdFailedToLoad(i);
+                callback.onAdFailedToLoad(i);
+            }
+
+            @Override
+            public void onAdFailedToShow(@Nullable AdError adError) {
+                super.onAdFailedToShow(adError);
+                callback.onAdFailedToShow(adError);
+            }
+
+            @Override
+            public void onAdClicked() {
+                super.onAdClicked();
+                callback.onAdClicked();
+            }
+        });
+    }
+
+    public void populateNativeAdView(Activity activity, ApNativeAd apNativeAd, FrameLayout adPlaceHolder, ShimmerFrameLayout containerShimmerLoading) {
+        if (apNativeAd.getAdmobNativeAd() == null && apNativeAd.getNativeView() == null) {
+            containerShimmerLoading.setVisibility(View.GONE);
+            return;
+        }
+        @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(activity).inflate(apNativeAd.getLayoutCustomNative(), null);
+        containerShimmerLoading.stopShimmer();
+        containerShimmerLoading.setVisibility(View.GONE);
+        adPlaceHolder.setVisibility(View.VISIBLE);
+        Admob.getInstance().populateUnifiedNativeAdView(apNativeAd.getAdmobNativeAd(), adView);
+        adPlaceHolder.removeAllViews();
+        adPlaceHolder.addView(adView);
+    }
+
 }

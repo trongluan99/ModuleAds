@@ -93,7 +93,6 @@ public class Admob {
     private final int MAX_SMALL_INLINE_BANNER_HEIGHT = 50;
 
     InterstitialAd mInterstitialSplash;
-    InterstitialAd interstitialAd;
 
     private String tokenAdjust;
 
@@ -173,7 +172,6 @@ public class Admob {
         this.tokenAdjust = tokenAdjust;
         this.context = context;
     }
-
 
     public boolean isShowLoadingSplash() {
         return isShowLoadingSplash;
@@ -780,6 +778,7 @@ public class Admob {
             public void onAdDismissedFullScreenContent() {
                 super.onAdDismissedFullScreenContent();
                 AppOpenManager.getInstance().setInterstitialShowing(false);
+                SharePreferenceUtils.setLastImpressionInterstitialTime(context);
                 if (callback != null) {
                     if (!openActivityAfterShowInterAds) {
                         callback.onNextAction();
@@ -809,7 +808,6 @@ public class Admob {
             @Override
             public void onAdShowedFullScreenContent() {
                 super.onAdShowedFullScreenContent();
-                SharePreferenceUtils.setLastImpressionInterstitialTime(context);
                 AppOpenManager.getInstance().setInterstitialShowing(true);
             }
 
