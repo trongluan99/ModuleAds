@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.modulelibads'
+    namespace 'com.zeros.modulelibads'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.modulelibads"
+        applicationId "com.zeros.modulelibads"
         minSdk 24
         targetSdk 33
         versionCode 1

@@ -53,7 +53,8 @@ dependencies {
     implementation 'com.google.ads.mediation:facebook:6.12.0.0'
     implementation 'com.google.ads.mediation:applovin:11.5.1.0'
     implementation 'com.google.ads.mediation:vungle:6.12.0.0'
-    implementation 'com.google.ads.mediation:mintegral:16.3.51.0'
+    /*implementation 'com.google.ads.mediation:pangle:4.9.0.8.0'
+    implementation 'com.google.ads.mediation:mintegral:16.3.51.0'*/
 
     // Facebook SDK
     implementation 'com.facebook.android:facebook-android-sdk:16.1.3'
@@ -75,7 +76,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.trongluan99'
-                artifactId = 'ModuleLibAds'
+                artifactId = 'ModuleAds'
                 version = '1.0.0'
             }
         }
