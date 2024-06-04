@@ -1,0 +1,3 @@
+rootProject.name = "ModuleLibAds"
+include ':app'
+include ':ads'
