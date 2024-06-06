@@ -27,7 +27,6 @@ import com.adjust.sdk.OnEventTrackingFailedListener;
 import com.adjust.sdk.OnEventTrackingSucceededListener;
 import com.adjust.sdk.OnSessionTrackingFailedListener;
 import com.adjust.sdk.OnSessionTrackingSucceededListener;
-import com.applovin.mediation.ads.MaxRewardedAd;
 import com.facebook.FacebookSdk;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.ads.AdError;
@@ -36,12 +35,10 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.nativead.NativeAdView;
-import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.zeros.ads.admob.Admob;
 import com.zeros.ads.admob.AppOpenManager;
 import com.zeros.ads.ads.wrapper.ApInterstitialAd;
 import com.zeros.ads.ads.wrapper.ApNativeAd;
-import com.zeros.ads.ads.wrapper.ApRewardAd;
 import com.zeros.ads.config.AmxAdConfig;
 import com.zeros.ads.event.AmxAdjust;
 import com.zeros.ads.funtion.AdCallback;
@@ -240,15 +237,16 @@ public class AmxAd {
         Admob.getInstance().onCheckShowSplashWhenFail(activity, callback, timeDelay);
     }
 
-    public InterstitialAd getInterstitialAds(Context context, String id, AdCallback adListener) {
+    public ApInterstitialAd getInterstitialAds(Context context, String id, AdCallback adListener) {
         ApInterstitialAd apInterstitialAd = new ApInterstitialAd();
         Admob.getInstance().getInterstitialAds(context, id, new AdCallback() {
             @Override
-            public void onInterstitialLoad(@Nullable InterstitialAd interstitialAd) {
-                super.onInterstitialLoad(interstitialAd);
+            public void onApInterstitialLoad(@Nullable ApInterstitialAd interstitialAd) {
+                super.onApInterstitialLoad(interstitialAd);
                 Log.d(TAG, "Admob onInterstitialLoad");
-                apInterstitialAd.setInterstitialAd(interstitialAd);
-                adListener.onInterstitialLoad(apInterstitialAd.getInterstitialAd());
+                assert interstitialAd != null;
+                apInterstitialAd.setInterstitialAd(interstitialAd.getInterstitialAd());
+                adListener.onApInterstitialLoad(interstitialAd);
             }
 
             @Override
@@ -264,7 +262,7 @@ public class AmxAd {
             }
 
         });
-        return apInterstitialAd.getInterstitialAd();
+        return apInterstitialAd;
     }
 
     public void forceShowInterstitial(@NonNull Context context, ApInterstitialAd mInterstitialAd,

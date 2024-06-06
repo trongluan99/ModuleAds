@@ -9,6 +9,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
+import com.zeros.ads.ads.wrapper.ApInterstitialAd;
 import com.zeros.ads.ads.wrapper.ApNativeAd;
 
 public class AdCallback {
@@ -49,6 +50,12 @@ public class AdCallback {
     public void onInterstitialLoad(@Nullable InterstitialAd interstitialAd) {
 
     }
+
+
+    public void onApInterstitialLoad(@Nullable ApInterstitialAd apInterstitialAd) {
+
+    }
+
 
     public void onAdClicked() {
     }
