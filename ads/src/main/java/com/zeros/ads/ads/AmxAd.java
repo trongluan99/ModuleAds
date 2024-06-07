@@ -241,23 +241,23 @@ public class AmxAd {
         ApInterstitialAd apInterstitialAd = new ApInterstitialAd();
         Admob.getInstance().getInterstitialAds(context, id, new AdCallback() {
             @Override
-            public void onApInterstitialLoad(@Nullable ApInterstitialAd interstitialAd) {
-                super.onApInterstitialLoad(interstitialAd);
-                Log.d(TAG, "Admob onInterstitialLoad");
-                assert interstitialAd != null;
-                apInterstitialAd.setInterstitialAd(interstitialAd.getInterstitialAd());
-                adListener.onApInterstitialLoad(interstitialAd);
+            public void onInterstitialLoad(@Nullable InterstitialAd interstitialAd) {
+                super.onInterstitialLoad(interstitialAd);
+                apInterstitialAd.setInterstitialAd(interstitialAd);
+                adListener.onApInterstitialLoad(apInterstitialAd);
             }
 
             @Override
             public void onAdFailedToLoad(@Nullable LoadAdError i) {
                 super.onAdFailedToLoad(i);
+                Log.d(TAG, "Admob onAdFailedToLoad");
                 adListener.onAdFailedToLoad(i);
             }
 
             @Override
             public void onAdFailedToShow(@Nullable AdError adError) {
                 super.onAdFailedToShow(adError);
+                Log.d(TAG, "Admob onAdFailedToShow");
                 adListener.onAdFailedToShow(adError);
             }
 
