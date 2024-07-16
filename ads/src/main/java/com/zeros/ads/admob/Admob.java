@@ -27,7 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.example.ads.R;
+import com.zeros.ads.R;
 import com.zeros.ads.billing.AppPurchase;
 import com.zeros.ads.dialog.PrepareLoadingAdsDialog;
 import com.zeros.ads.event.AmxLogEventManager;

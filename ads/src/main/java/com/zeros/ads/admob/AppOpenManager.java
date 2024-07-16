@@ -24,7 +24,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.example.ads.R;
+import com.zeros.ads.R;
 import com.zeros.ads.billing.AppPurchase;
 import com.zeros.ads.config.AmxAdConfig;
 import com.zeros.ads.dialog.PrepareLoadingAdsDialog;

@@ -3,7 +3,7 @@ package com.zeros.ads.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import com.example.ads.R;
+import com.zeros.ads.R;
 
 public class ResumeLoadingDialog extends Dialog {
 

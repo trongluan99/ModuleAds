@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.ProductDetails;
-import com.example.ads.R;
+import com.zeros.ads.R;
 import com.zeros.ads.funtion.PurchaseListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
